@@ -34,7 +34,7 @@ class CardDeliveryTest {
         String futureDateStr = futureDate.format(formatter);
 
         SelenideElement form = $(".form_theme_alfa-on-white");
-        //form.$("[data-test-id=city] input").setValue("Великий Новгород");
+        form.$("[data-test-id=city] input").setValue("Великий Новгород");
         form.$("[data-test-id=date] input").sendKeys(Keys.HOME, Keys.chord(Keys.SHIFT, Keys.END), Keys.BACK_SPACE);
         form.$("[data-test-id=date] input").setValue(futureDateStr);
         form.$("[data-test-id=name] input").setValue("Анна-Мария Иванова");
