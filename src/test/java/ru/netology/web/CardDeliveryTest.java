@@ -11,6 +11,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 import static com.codeborne.selenide.Condition.exactText;
+import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selenide.*;
 
 
@@ -38,7 +39,7 @@ class CardDeliveryTest {
         form.$(".button_theme_alfa-on-white").click();
         $(".notification__content")
                 .shouldHave(Condition.text("Встреча успешно забронирована на " + planningDate), Duration.ofSeconds(15))
-                .shouldBe(Condition.visible);
+                .shouldBe(visible);
     }
 
     @Test
@@ -55,7 +56,34 @@ class CardDeliveryTest {
         form.$(".button_theme_alfa-on-white").click();
         $(".notification__content")
                 .shouldHave(Condition.text("Встреча успешно забронирована на " + planningDate), Duration.ofSeconds(15))
-                .shouldBe(Condition.visible);
+                .shouldBe(visible);
+    }
+
+    @Test
+    void shouldHappyPathWhenOpenCalendarPopup() {
+        String planningDate = generateDate(30, "dd.MM.yyyy");
+        String planningDateForSearch = generateDate(30, "d");
+        SelenideElement form = $(".form_theme_alfa-on-white");
+        form.$("[data-test-id=city] input").setValue("Ор");
+        $$(".popup_visible .menu_mode_radio-check .menu-item__control").find(exactText("Оренбург")).click();
+        form.$(".input__icon .icon_name_calendar").click();
+        SelenideElement dayElement = $$("[data-day]").find(exactText(planningDateForSearch));
+        if (!dayElement.exists()) {
+            SelenideElement button = $(".calendar-input__calendar-wrapper .calendar__arrow_direction_right[data-step='1']");
+            button.click();
+
+            dayElement = $$("[data-day]").find(exactText(planningDateForSearch));
+            dayElement.shouldBe(visible).click();
+        } else {
+            dayElement.shouldBe(visible).click();
+        }
+        form.$("[data-test-id=name] input").setValue("Анна-Мария Иванова");
+        form.$("[data-test-id=phone] input").setValue("+79990000000");
+        form.$("[data-test-id=agreement]").click();
+        form.$(".button_theme_alfa-on-white").click();
+        $(".notification__content")
+                .shouldHave(Condition.text("Встреча успешно забронирована на " + planningDate), Duration.ofSeconds(15))
+                .shouldBe(visible);
     }
 
 }
